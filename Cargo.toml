@@ -1,0 +1,10 @@
+[package]
+name = "picserv"
+version = "0.1.0"
+authors = ["Thorsten Schmitt-Rink <schmittrink@gmail.com>"]
+
+[dependencies]
+hyper = "*"
+rust-crypto = "^0.2"
+url = "*"
+iron = "*"
