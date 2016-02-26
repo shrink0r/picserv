@@ -6,7 +6,7 @@ use iron::status;
 use url::Url;
 
 pub struct Serve<'a> {
-    downloader: Downloader<'a>
+    downloader: &'a Downloader<'a>
 }
 
 impl<'a> Serve<'a> {
