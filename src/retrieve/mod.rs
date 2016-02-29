@@ -9,6 +9,12 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use url::Url;
+use std::any::Any;
+use std::marker::{Sync, Send};
+
+pub trait ImageRetriever {
+    fn retrieve(&self, url: &Url) -> Result<File, String>;
+}
 
 pub struct Downloader {
     config: config::Config
@@ -17,26 +23,6 @@ pub struct Downloader {
 impl Downloader {
     pub fn new(config: config::Config) -> Downloader {
         Downloader { config: config }
-    }
-
-    pub fn download(&self, img_url: &Url) -> Result<File, String> {
-        let mut img_buf: Vec<u8> = Vec::new();
-
-        match img_url.scheme.as_ref() {
-            "http" | "https" => self.download_from(img_url, &mut img_buf),
-            _ => panic!("unsupported scheme given {:?}", img_url.scheme)
-        };
-
-        let file_path = self.download_path_from(img_url);
-        let mut file = match File::create(&file_path) {
-            Err(why) => panic!("error: {} ", Error::description(&why)),
-            Ok(file) => file,
-        };
-
-        match file.write_all(&mut img_buf) {
-            Err(why) => Err(format!("error: {} ", Error::description(&why))),
-            Ok(_) => Ok(file)
-        }
     }
 
     fn download_from(&self, img_url: &Url, img_buf: &mut Vec<u8>) {
@@ -65,5 +51,27 @@ impl Downloader {
         };
         path_parts.insert(0, base_path.to_string());
         path_parts.join("")
+    }
+}
+
+impl ImageRetriever for Downloader {
+    pub fn retrieve(&self, img_url: &Url) -> Result<File, String> {
+        let mut img_buf: Vec<u8> = Vec::new();
+
+        match img_url.scheme.as_ref() {
+            "http" | "https" => self.download_from(img_url, &mut img_buf),
+            _ => panic!("unsupported scheme given {:?}", img_url.scheme)
+        };
+
+        let file_path = self.download_path_from(img_url);
+        let mut file = match File::create(&file_path) {
+            Err(why) => panic!("error: {} ", Error::description(&why)),
+            Ok(file) => file,
+        };
+
+        match file.write_all(&mut img_buf) {
+            Err(why) => Err(format!("error: {} ", Error::description(&why))),
+            Ok(_) => Ok(file)
+        }
     }
 }
