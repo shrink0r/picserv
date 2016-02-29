@@ -8,13 +8,13 @@ pub enum ConfigVal {
     Boolean(bool)
 }
 
-pub struct Config<'a> {
-    config: HashMap<&'a str, ConfigVal>
+pub struct Config {
+    config: HashMap<&'static str, ConfigVal>
 }
 
-impl<'a> Config<'a> {
-    pub fn new() -> Config<'a> {
-        let mut config: HashMap<&str, ConfigVal> = HashMap::new();
+impl Config {
+    pub fn new() -> Config {
+        let mut config: HashMap<&'static str, ConfigVal> = HashMap::new();
         config.insert("base_dir", ConfigVal::String("/Users/tschmitt/Downloads/.picserv/".to_string()));
         config.insert("enable_cache", ConfigVal::Boolean(false));
         config.insert("retry_limit", ConfigVal::Integer(23));
@@ -22,7 +22,7 @@ impl<'a> Config<'a> {
         Config { config: config }
     }
 
-    pub fn get(&self, key: &str) -> &ConfigVal {
+    pub fn get(&self, key: &'static str) -> &ConfigVal {
         self.config.get(key).unwrap()
     }
 }

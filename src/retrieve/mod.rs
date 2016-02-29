@@ -5,19 +5,17 @@ use crypto::digest::Digest;
 use crypto::md5::Md5;
 use hyper::Client;
 use hyper::header::Connection;
-use std::collections::HashMap;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
-use std::path::Path;
 use url::Url;
 
-pub struct Downloader<'a> {
-    config: config::Config<'a>
+pub struct Downloader {
+    config: config::Config
 }
 
-impl<'a> Downloader<'a> {
-    pub fn new(config: config::Config) -> Downloader<'a> {
+impl Downloader {
+    pub fn new(config: config::Config) -> Downloader {
         Downloader { config: config }
     }
 
