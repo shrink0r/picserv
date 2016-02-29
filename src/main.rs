@@ -3,16 +3,16 @@ extern crate url;
 extern crate crypto;
 extern crate iron;
 
-mod downloader;
-mod server;
+mod retrieve;
+mod serve;
 
-use downloader::Downloader;
-use downloader::config::Config;
-use server::Server;
+use retrieve::Downloader;
+use retrieve::config::Config;
+use serve::Serve;
+use iron::Chain;
+use iron::Iron;
 
 fn main() {
-    let config = Config::new();
-    let downloader = Downloader::new(&config);
-    let server = Server::new(&downloader);
-    server.listen("localhost:3000".as_ref());
+    let chain = Chain::new(Serve::new(Downloader::new(Config::new())));
+    Iron::new(chain).http("localhost:3000").unwrap();
 }

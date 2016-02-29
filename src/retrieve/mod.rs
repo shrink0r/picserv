@@ -13,11 +13,11 @@ use std::path::Path;
 use url::Url;
 
 pub struct Downloader<'a> {
-    config: &'a config::Config<'a>
+    config: config::Config<'a>
 }
 
 impl<'a> Downloader<'a> {
-    pub fn new(config: &'a config::Config) -> Downloader<'a> {
+    pub fn new(config: config::Config) -> Downloader<'a> {
         Downloader { config: config }
     }
 
