@@ -9,7 +9,6 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use url::Url;
-use std::any::Any;
 use std::marker::{Sync, Send};
 
 pub trait ImageRetriever : Send + Sync {
