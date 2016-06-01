@@ -12,7 +12,7 @@ use url::Url;
 use std::marker::{Sync, Send};
 
 pub trait ImageRetriever : Send + Sync {
-    fn retrieve(&self, url: &Url) -> Result<File, String>;
+    fn retrieve(&self, url: &Url) -> Result<String, String>;
 }
 
 pub struct Downloader {
@@ -55,7 +55,7 @@ impl Downloader {
 
 
 impl ImageRetriever for Downloader {
-    fn retrieve(&self, img_url: &Url) -> Result<File, String> {
+    fn retrieve(&self, img_url: &Url) -> Result<String, String> {
         let mut img_buf: Vec<u8> = Vec::new();
 
         match img_url.scheme.as_ref() {
@@ -70,8 +70,8 @@ impl ImageRetriever for Downloader {
         };
 
         match file.write_all(&mut img_buf) {
-            Err(why) => Err(format!("error: {} ", Error::description(&why))),
-            Ok(_) => Ok(file)
+            Err(why) => panic!("{:?}", Error::description(&why)),
+            Ok(_) => Ok(file_path)
         }
     }
 }

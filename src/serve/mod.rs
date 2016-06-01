@@ -6,8 +6,10 @@ use iron::status;
 use retrieve::ImageRetriever;
 use std::any::Any;
 use url::Url;
+use std::io::prelude::*;
+use std::fs::File;
+use std::error::Error;
 use urlencoded::UrlEncodedQuery;
-use std::io::Read;
 
 pub struct Serve<T> where T : ImageRetriever {
     img_retriever: T
@@ -33,12 +35,18 @@ impl<T> Handler for Serve<T> where T : ImageRetriever + Any {
 
         let content_type = "image/jpeg".parse::<Mime>().unwrap();
         match self.img_retriever.retrieve(&img_url) {
-            Ok(mut f) => {
+            Ok(path) => {
                 let mut data = Vec::new();
-                let length = f.read_to_end(&mut data);
+                let mut file = match File::open(path) {
+                    Err(why) => panic!("error: {} ", Error::description(&why)),
+                    Ok(file) => file,
+                };
+                let length = file.read_to_end(&mut data);
                 return Ok(Response::with((content_type, status::Ok, data)));
             },
-            Err(_) => Ok(Response::with(status::NotFound))
+            Err(err) => {
+                Ok(Response::with(status::NotFound))
+            }
         }
     }
 }
